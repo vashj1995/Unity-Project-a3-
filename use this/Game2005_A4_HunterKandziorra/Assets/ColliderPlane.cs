@@ -10,7 +10,7 @@ public enum Axis
 }
 
 //We can define a plane with a normal vector, and a point on the plane
-public class FizziksColliderPlane : FizziksColliderBase
+public class ColliderPlane : ColliderBase
 {
     public Axis alignment = Axis.Y;
     

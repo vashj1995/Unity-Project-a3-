@@ -2,26 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FizziksSystem : MonoBehaviour
+public class KinematicsSystem : MonoBehaviour
 {
     public Vector3 gravity = new Vector3(0, -9.81f, 0);
-    public List<FizziksObject> fizziksObjects = new List<FizziksObject>();
+    public List<Kinematics> Kinematiks = new List<Kinematics>();
 
     //Smallest distance before things get FUNKY
     public float minimumDistance = 0.0001f;
 
-    //void Start()
-    //{
-    //    FizziksObject[] objects = FindObjectsOfType<FizziksObject>();
-    //    fizziksObjects.AddRange(objects);
-    //}
-
     void FixedUpdate()
     {
         //Velocity update
-        for (int i = 0; i < fizziksObjects.Count; i++)
+        for (int i = 0; i < Kinematiks.Count; i++)
         {
-            FizziksObject obj = fizziksObjects[i];
+            Kinematics obj = Kinematiks[i];
             if (!obj.lockPosition)
             {
                 obj.velocity += gravity * obj.gravityScale * Time.fixedDeltaTime;
@@ -29,9 +23,9 @@ public class FizziksSystem : MonoBehaviour
         }
 
         //Position update
-        for (int i = 0; i < fizziksObjects.Count; i++)
+        for (int i = 0; i < Kinematiks.Count; i++)
         {
-            FizziksObject obj = fizziksObjects[i];
+            Kinematics obj = Kinematiks[i];
 
             if (!obj.lockPosition)
             {
@@ -45,12 +39,12 @@ public class FizziksSystem : MonoBehaviour
 
     void CollisionUpdate()
     {
-        for (int objectIndexA = 0; objectIndexA < fizziksObjects.Count; objectIndexA++)
+        for (int objectIndexA = 0; objectIndexA < Kinematiks.Count; objectIndexA++)
         {
-            for (int objectIndexB = objectIndexA + 1; objectIndexB < fizziksObjects.Count; objectIndexB++)
+            for (int objectIndexB = objectIndexA + 1; objectIndexB < Kinematiks.Count; objectIndexB++)
             {
-                FizziksObject objectA = fizziksObjects[objectIndexA];
-                FizziksObject objectB = fizziksObjects[objectIndexB];
+                Kinematics objectA = Kinematiks[objectIndexA];
+                Kinematics objectB = Kinematiks[objectIndexB];
 
                 //If one does not have a collider...
                 if (objectA.shape == null || objectB.shape == null)
@@ -65,19 +59,19 @@ public class FizziksSystem : MonoBehaviour
                 {
                     //FizziksObject.shape is a base class reference to FizziksColliderBase,
                     //but to do specific things with it, we need to cast to our derived class FizziksColliderSphere
-                    SphereSphereCollision((FizziksColliderSphere)objectA.shape, (FizziksColliderSphere)objectB.shape);
+                    SphereSphereCollision((ColliderSphere)objectA.shape, (ColliderSphere)objectB.shape);
                 }
 
                 if (objectA.shape.GetCollisionShape() == CollisionShape.Sphere &&
                     objectB.shape.GetCollisionShape() == CollisionShape.Plane)
                 {
-                    SpherePlaneCollision((FizziksColliderSphere)objectA.shape, (FizziksColliderPlane)objectB.shape);
+                    SpherePlaneCollision((ColliderSphere)objectA.shape, (ColliderPlane)objectB.shape);
                 }
 
                 if (objectA.shape.GetCollisionShape() == CollisionShape.Plane &&
                     objectB.shape.GetCollisionShape() == CollisionShape.Sphere)
                 {
-                    SpherePlaneCollision((FizziksColliderSphere)objectB.shape, (FizziksColliderPlane)objectA.shape);
+                    SpherePlaneCollision((ColliderSphere)objectB.shape, (ColliderPlane)objectA.shape);
                 }
             }
         }
@@ -85,7 +79,7 @@ public class FizziksSystem : MonoBehaviour
 
     //In C++ we can return more than one thing at a time using reference parameters with &
     //In C#, we can define "out" parameters, which allows us to return more than one thing
-    void GetLockedMovementScalars(FizziksObject a, FizziksObject b, out float movementScalarA, out float movementScalarB)
+    void GetLockedMovementScalars(Kinematics a, Kinematics b, out float movementScalarA, out float movementScalarB)
     {
         //If A is locked and B is not
         // A*0
@@ -124,7 +118,7 @@ public class FizziksSystem : MonoBehaviour
         movementScalarB = 0.0f;
     }
 
-    void SphereSphereCollision(FizziksColliderSphere a, FizziksColliderSphere b)
+    void SphereSphereCollision(ColliderSphere a, ColliderSphere b)
     { 
         // do sphere-sphere collision detection
         // note: sphere-sphere collision detection is the same as circle-circle.
@@ -167,7 +161,7 @@ public class FizziksSystem : MonoBehaviour
             collisionNormalAtoB, contactPoint);
     }
 
-    void SpherePlaneCollision(FizziksColliderSphere a, FizziksColliderPlane b)
+    void SpherePlaneCollision(ColliderSphere a, ColliderPlane b)
     {
 
         Vector3 somePointOnThePlane = b.transform.position;
@@ -219,7 +213,7 @@ public class FizziksSystem : MonoBehaviour
             normal,
             contact);
     }
-    private void ApplyMinimumTranslationVector(FizziksObject a, FizziksObject b, Vector3 minimumTranslationVectorAtoB, Vector3 normal, Vector3 contactPoint)
+    private void ApplyMinimumTranslationVector(Kinematics a, Kinematics b, Vector3 minimumTranslationVectorAtoB, Vector3 normal, Vector3 contactPoint)
     {
         GetLockedMovementScalars(a, b, out float movementScalarA, out float movementScalarB);
 

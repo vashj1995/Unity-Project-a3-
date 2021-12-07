@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FizziksObject : MonoBehaviour
+public class Kinematics : MonoBehaviour
 {
     public float mass = 1.0f;
     public Vector3 velocity = Vector3.zero;
@@ -13,13 +13,13 @@ public class FizziksObject : MonoBehaviour
 
     // In C# All class members are reference types.
     // This is a base class reference which will be assigned derived class instances
-    public FizziksColliderBase shape = null; 
+    public ColliderBase shape = null; 
 
     // Start is called before the first frame update
     void Start()
     {
-        FindObjectOfType<FizziksSystem>().fizziksObjects.Add(this);
-        shape = GetComponent<FizziksColliderBase>();
+        FindObjectOfType<KinematicsSystem>().Kinematiks.Add(this);
+        shape = GetComponent<ColliderBase>();
         // Debug.Log("Hello World from " + gameObject.name + "!");
     }
 }
